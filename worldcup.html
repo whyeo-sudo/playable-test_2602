@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>티빙 인생작 월드컵 - 유미의 세포들 편</title>
+    <style>
+        /* --- Reset & Base --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background-color: #e0f7fa;
+            /* Sky blue base */
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Theme: Cell Village --- */
+        .bg-village {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #A2D9FF 0%, #FFFFFF 60%, #8BC34A 60%, #689F38 100%);
+            z-index: -1;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: floatCloud 20s infinite linear;
+        }
+
+        @keyframes floatCloud {
+            from {
+                transform: translateX(-100px);
+            }
+
+            to {
+                transform: translateX(100vw);
+            }
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            padding: 15px;
+            color: #333;
+            font-weight: 900;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 0px #fff;
+            position: relative;
+            z-index: 10;
+        }
+
+        .round-badge {
+            background: #FF153C;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        /* --- Game Container --- */
+        #game-area {
+            flex: 1;
+            display: flex;
+            position: relative;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        /* Responsive Layout: Portrait (Column), Landscape (Row) */
+        @media (orientation: portrait) {
+            #game-area {
+                flex-direction: column;
+            }
+        }
+
+        @media (orientation: landscape) {
+            #game-area {
+                flex-direction: row;
+            }
+        }
+
+        /* --- Card Styles --- */
+        .card {
+            flex: 1;
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card:active {
+            transform: scale(0.95);
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover img {
+            opacity: 1;
+        }
+
+        .card-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 20px 10px 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Selection Animation Classes */
+        .card.selected {
+            z-index: 10;
+            border-color: #FF153C;
+            animation: selectedAnim 0.8s forwards;
+        }
+
+        .card.unselected {
+            animation: unselectedAnim 0.5s forwards;
+            pointer-events: none;
+        }
+
+        @keyframes selectedAnim {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 30px #FF153C;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+
+            /* Disappear for next round */
+        }
+
+        @keyframes unselectedAnim {
+            to {
+                transform: scale(0.8);
+                opacity: 0;
+                filter: grayscale(100%);
+            }
+        }
+
+        /* --- VS Badge --- */
+        .vs-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            color: #FF153C;
+            font-weight: 900;
+            font-size: 1.5rem;
+            padding: 10px 15px;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* --- Cell Reactions --- */
+        .cell-reaction {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            opacity: 0;
+            z-index: 20;
+            text-align: center;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .cell-reaction.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .cell-bubble {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .cell-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: white transparent transparent;
+        }
+
+        .cell-avatar {
+            font-size: 60px;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+        }
+
+        /* --- Winner Screen --- */
+        #winner-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .judge-cell {
+            font-size: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .winner-card {
+            width: 200px;
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .winner-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cta-btn {
+            background: #FF153C;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 21, 60, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background -->
+    <div class="bg-village">
+        <div class="cloud" style="top: 10%; width: 60px; height: 60px; animation-duration: 25s;"></div>
+        <div class="cloud" style="top: 20%; left: 40%; width: 40px; height: 40px; animation-duration: 30s;"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="round-badge" id="round-badge">8강전</div>
+        <div id="status-text">당신의 취향을 저격할 세포는? 1/4</div>
+    </header>
+
+    <!-- Game Area -->
+    <div id="game-area">
+        <div class="vs-badge">VS</div>
+
+        <!-- Card Left/Top -->
+        <div class="card" id="card-a" onclick="selectCard('a')">
+            <img src="" alt="Contents A" id="img-a">
+            <div class="card-title" id="title-a">Contents A</div>
+        </div>
+
+        <!-- Card Right/Bottom -->
+        <div class="card" id="card-b" onclick="selectCard('b')">
+            <img src="" alt="Contents B" id="img-b">
+            <div class="card-title" id="title-b">Contents B</div>
+        </div>
+    </div>
+
+    <!-- Cell Reaction Overlay -->
+    <div class="cell-reaction" id="cell-reaction">
+        <div class="cell-bubble" id="cell-msg">탁월한 선택이야!</div>
+        <div class="cell-avatar" id="cell-icon">😍</div>
+    </div>
+
+    <!-- Winner Screen -->
+    <div id="winner-screen">
+        <div class="judge-cell">⚖️</div>
+        <h2>판사 세포의 판결!</h2>
+        <p>당신의 최애 콘텐츠가 정해졌습니다.</p>
+
+        <div class="winner-card">
+            <img src="" id="winner-img">
+        </div>
+        <h3 id="winner-title" style="margin-bottom: 20px; color: #333;">Title</h3>
+
+        <button class="cta-btn" onclick="goToApp()">티빙에서 바로보기</button>
+    </div>
+
+    <script>
+        // --- Data: TVING Contents (8 Items) ---
+        // Using placeholder colors/text for prototype. In real ad, use actual poster images.
+        const originalContents = [
+            { id: 1, title: "눈물의 여왕", color: "#FFB6C1", img: "https://via.placeholder.com/300x450/FFB6C1/333?text=Queen+of+Tears" },
+            { id: 2, title: "선재 업고 튀어", color: "#87CEEB", img: "https://via.placeholder.com/300x450/87CEEB/333?text=Lovely+Runner" },
+            { id: 3, title: "환승연애3", color: "#FF69B4", img: "https://via.placeholder.com/300x450/FF69B4/333?text=Transit+Love+3" },
+            { id: 4, title: "크라임씬 리턴즈", color: "#4B0082", img: "https://via.placeholder.com/300x450/4B0082/fff?text=Crime+Scene" },
+            { id: 5, title: "피라미드 게임", color: "#DC143C", img: "https://via.placeholder.com/300x450/DC143C/fff?text=Pyramid+Game" },
+            { id: 6, title: "LTNS", color: "#FFD700", img: "https://via.placeholder.com/300x450/FFD700/333?text=LTNS" },
+            { id: 7, title: "이재, 곧 죽습니다", color: "#000000", img: "https://via.placeholder.com/300x450/000000/fff?text=Deaths+Game" },
+            { id: 8, title: "운수 오진 날", color: "#2E8B57", img: "https://via.placeholder.com/300x450/2E8B57/fff?text=A+Bloody+Lucky+Day" }
+        ];
+
+        // Cell Reactions Data
+        const reactions = {
+            love: { icon: "😍", msgs: ["사랑스러워!", "두근두근해!", "로맨틱해!"] },
+            reason: { icon: "👓", msgs: ["합리적이야.", "분석 완료.", "논리적인 선택."] },
+            hungry: { icon: "🍗", msgs: ["맛있겠다..", "시원한 전개!", "야식 생각나네"] }
+        };
+
+        // --- State ---
+        let currentRound = []; // Contents for current round
+        let nextRound = [];    // Winners for next round
+        let currentIndex = 0;  // Index in current pair
+        let isAnimating = false;
+
+        // --- Init ---
+        function initGame() {
+            // Shuffle contents
+            currentRound = [...originalContents].sort(() => Math.random() - 0.5);
+            nextRound = [];
+            currentIndex = 0;
+            renderRound();
+        }
+
+        // --- Render ---
+        function renderRound() {
+            const roundName = currentRound.length === 2 ? "결승전" : currentRound.length + "강전";
+            const matchCount = (currentIndex / 2) + 1;
+            const totalMatches = currentRound.length / 2;
+
+            document.getElementById('round-badge').innerText = roundName;
+            document.getElementById('status-text').innerText = roundName === "결승전" ? "최고의 작품을 선택하세요!" : `${matchCount} / ${totalMatches}`;
+
+            const itemA = currentRound[currentIndex];
+            const itemB = currentRound[currentIndex + 1];
+
+            // Render Cards
+            updateCard('a', itemA);
+            updateCard('b', itemB);
+
+            // Reset animations
+            document.querySelectorAll('.card').forEach(c => {
+                c.className = 'card';
+                c.style.opacity = '1';
+                c.style.transform = 'scale(1)';
+            });
+        }
+
+        function updateCard(side, item) {
+            const img = document.getElementById(`img-${side}`);
+            const title = document.getElementById(`title-${side}`);
+
+            img.src = item.img;
+            // Provide fallback colored background if image fails (for prototype)
+            img.style.backgroundColor = item.color;
+            title.innerText = item.title;
+        }
+
+        // --- Interaction ---
+        function selectCard(selectedSide) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const winnerIndex = selectedSide === 'a' ? currentIndex : currentIndex + 1;
+            const loserSide = selectedSide === 'a' ? 'b' : 'a';
+
+            // Add to next round
+            nextRound.push(currentRound[winnerIndex]);
+
+            // 1. Card Animation
+            document.getElementById(`card-${selectedSide}`).classList.add('selected');
+            document.getElementById(`card-${loserSide}`).classList.add('unselected');
+
+            // 2. Cell Reaction (Random)
+            showCellReaction();
+
+            // 3. Transition Logic
+            setTimeout(() => {
+                currentIndex += 2;
+
+                // Check Round End
+                if (currentIndex >= currentRound.length) {
+                    if (nextRound.length === 1) {
+                        showWinner(nextRound[0]);
+                        return; // Game Over
+                    }
+                    // Prepare Next Round
+                    currentRound = [...nextRound];
+                    nextRound = [];
+                    currentIndex = 0;
+                }
+
+                renderRound();
+                hideCellReaction();
+                isAnimating = false;
+
+            }, 1200); // Transition Time
+        }
+
+        function showCellReaction() {
+            const types = ['love', 'reason', 'hungry'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            const data = reactions[type];
+            const msg = data.msgs[Math.floor(Math.random() * data.msgs.length)];
+
+            const el = document.getElementById('cell-reaction');
+            const bubble = document.getElementById('cell-msg');
+            const icon = document.getElementById('cell-icon');
+
+            bubble.innerText = msg;
+            icon.innerText = data.icon;
+
+            el.classList.add('show');
+        }
+
+        function hideCellReaction() {
+            document.getElementById('cell-reaction').classList.remove('show');
+        }
+
+        // --- Winner Logic ---
+        function showWinner(item) {
+            const screen = document.getElementById('winner-screen');
+            screen.style.display = 'flex';
+            document.getElementById('winner-img').src = item.img;
+            document.getElementById('winner-title').innerText = item.title;
+
+            // Fire confetti or effects here
+        }
+
+        function goToApp() {
+            // Deeplink or App Store link
+            window.location.href = "https://www.tving.com";
+        }
+
+        // Start
+        initGame();
+
+    </script>
+</body>
+
+</html>
