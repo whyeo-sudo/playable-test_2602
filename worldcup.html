@@ -3,10 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>티빙 인생작 월드컵 - 유미의 세포들 편</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>티빙 콘텐츠 월드컵</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Noto+Sans+KR:wght@400;700;900&display=swap"
+        rel="stylesheet">
     <style>
-        /* --- Reset & Base --- */
+        :root {
+            --neon-red: #FF153C;
+            --neon-cyan: #00FFFF;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,258 +23,391 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
-            background-color: #e0f7fa;
-            /* Sky blue base */
-            overflow: hidden;
+            background: #000;
             width: 100vw;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
+            overflow: hidden;
+            font-family: 'Noto Sans KR', sans-serif;
         }
 
-        /* --- Theme: Cell Village --- */
-        .bg-village {
-            position: absolute;
+        /* Video Background */
+        .bg-video {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, #A2D9FF 0%, #FFFFFF 60%, #8BC34A 60%, #689F38 100%);
-            z-index: -1;
+            object-fit: cover;
+            z-index: 0;
         }
 
-        .cloud {
+        /* Darkening overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.6) 80%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
             position: absolute;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            animation: floatCloud 20s infinite linear;
-        }
-
-        @keyframes floatCloud {
-            from {
-                transform: translateX(-100px);
-            }
-
-            to {
-                transform: translateX(100vw);
-            }
-        }
-
-        /* --- Header --- */
-        header {
-            text-align: center;
-            padding: 15px;
-            color: #333;
-            font-weight: 900;
-            font-size: 1.2rem;
-            text-shadow: 2px 2px 0px #fff;
-            position: relative;
-            z-index: 10;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
         }
 
         .round-badge {
-            background: #FF153C;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #fff;
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 0 0 25px var(--neon-red), 2px 2px 8px rgba(0, 0, 0, 0.8);
             display: inline-block;
-            margin-bottom: 5px;
+            white-space: nowrap;
         }
 
-        /* --- Game Container --- */
-        #game-area {
-            flex: 1;
-            display: flex;
-            position: relative;
-            padding: 10px;
-            gap: 10px;
-        }
-
-        /* Responsive Layout: Portrait (Column), Landscape (Row) */
-        @media (orientation: portrait) {
-            #game-area {
-                flex-direction: column;
+        @media (max-width: 500px) {
+            .round-badge {
+                font-size: 1.6rem;
+                letter-spacing: 0.5px;
             }
         }
 
-        @media (orientation: landscape) {
-            #game-area {
-                flex-direction: row;
+        .tving-logo {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: auto;
+            z-index: 100;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+        }
+
+        @media (max-width: 500px) {
+            .tving-logo {
+                width: 80px;
+                top: 15px;
+                right: 15px;
             }
         }
 
-        /* --- Card Styles --- */
-        .card {
-            flex: 1;
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 4px solid white;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background: #333;
+        /* Arena Container */
+        .arena {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .card:active {
-            transform: scale(0.95);
-        }
-
-        .card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-
-        .card:hover img {
-            opacity: 1;
-        }
-
-        .card-title {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            color: white;
-            padding: 20px 10px 10px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        /* Selection Animation Classes */
-        .card.selected {
+            margin-top: -8%;
+            /* Move cards upward */
             z-index: 10;
-            border-color: #FF153C;
-            animation: selectedAnim 0.8s forwards;
         }
 
-        .card.unselected {
-            animation: unselectedAnim 0.5s forwards;
-            pointer-events: none;
+        /* Card positioning - Side by side on ALL orientations */
+        .card {
+            position: relative;
+            width: 28%;
+            /* Narrower for side-by-side */
+            max-width: 200px;
+            aspect-ratio: 2/3;
+            /* Tall rectangular */
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        @keyframes selectedAnim {
-            0% {
-                transform: scale(1);
+        /* Left card */
+        #card-a {
+            margin-right: 8%;
+            z-index: 20;
+            animation: float-left 3.5s ease-in-out infinite;
+        }
+
+        /* Right card */
+        #card-b {
+            margin-left: 8%;
+            z-index: 20;
+            animation: float-right 3.5s ease-in-out infinite;
+        }
+
+        /* Floating animations */
+        @keyframes float-left {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
             }
 
             50% {
-                transform: scale(1.1);
-                box-shadow: 0 0 30px #FF153C;
+                transform: translateY(-15px) translateX(-3px);
             }
+        }
 
+        @keyframes float-right {
+
+            0%,
             100% {
-                transform: scale(1);
-                opacity: 0;
+                transform: translateY(0) translateX(0);
             }
 
-            /* Disappear for next round */
-        }
-
-        @keyframes unselectedAnim {
-            to {
-                transform: scale(0.8);
-                opacity: 0;
-                filter: grayscale(100%);
+            50% {
+                transform: translateY(-15px) translateX(3px);
             }
         }
 
-        /* --- VS Badge --- */
-        .vs-badge {
+        /* Card visual */
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        #card-a .card-inner {
+            border-color: var(--neon-red);
+            box-shadow: 0 0 30px rgba(255, 21, 60, 0.5);
+        }
+
+        #card-b .card-inner {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .card-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Reflection */
+        .reflection {
+            position: absolute;
+            top: 102%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            transform: scaleY(-1);
+            opacity: 0.2;
+            pointer-events: none;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+        }
+
+        /* Card Title */
+        .card-title {
+            position: absolute;
+            top: 105%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 5px;
+        }
+
+        @media (min-width: 768px) {
+            .card-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        .reflection img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* VS Badge - Between the two cards */
+        .vs-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #fff;
-            color: #FF153C;
-            font-weight: 900;
-            font-size: 1.5rem;
-            padding: 10px 15px;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 5;
+            z-index: 50;
             pointer-events: none;
         }
 
-        /* --- Cell Reactions --- */
-        .cell-reaction {
-            position: absolute;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
+        .vs-text {
+            font-family: 'Black Ops One', cursive;
+            font-size: 4rem;
+            color: #fff;
+            text-shadow:
+                3px 3px 0 var(--neon-red),
+                -3px -3px 0 var(--neon-cyan);
+            animation: pulse-vs 1.2s ease-in-out infinite alternate;
+        }
+
+        @media (min-width: 768px) {
+            .vs-text {
+                font-size: 5rem;
+            }
+
+            .card {
+                width: 22%;
+                max-width: 250px;
+            }
+        }
+
+        @keyframes pulse-vs {
+            from {
+                transform: scale(1);
+                opacity: 0.85;
+            }
+
+            to {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        /* VS hidden during selection */
+        .vs-container.hidden {
             opacity: 0;
-            z-index: 20;
-            text-align: center;
             pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: opacity 0.3s ease;
         }
 
-        .cell-reaction.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
+        /* Screen shake for final match */
+        @keyframes screen-shake {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            10% {
+                transform: translate(-10px, -10px);
+            }
+
+            20% {
+                transform: translate(10px, 10px);
+            }
+
+            30% {
+                transform: translate(-10px, 10px);
+            }
+
+            40% {
+                transform: translate(10px, -10px);
+            }
+
+            50% {
+                transform: translate(-10px, -10px);
+            }
+
+            60% {
+                transform: translate(10px, 10px);
+            }
+
+            70% {
+                transform: translate(-10px, 10px);
+            }
+
+            80% {
+                transform: translate(10px, -10px);
+            }
+
+            90% {
+                transform: translate(-10px, 10px);
+            }
         }
 
-        .cell-bubble {
-            background: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-            position: relative;
+        body.shake {
+            animation: screen-shake 0.5s ease-in-out;
         }
 
-        .cell-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            margin-left: -8px;
-            border-width: 8px 8px 0;
-            border-style: solid;
-            border-color: white transparent transparent;
+        /* Interaction states */
+        .card:active {
+            transform: scale(0.95) !important;
+            animation: none !important;
         }
 
-        .cell-avatar {
-            font-size: 60px;
-            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+        .card.winner {
+            z-index: 200 !important;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            margin: 0 !important;
+            transform: translate(-50%, -50%) scale(1.4) !important;
+            animation: none !important;
+            max-width: none;
+            width: 50%;
         }
 
-        /* --- Winner Screen --- */
+        .card.winner .card-inner {
+            border-width: 4px;
+            border-color: #fff;
+            box-shadow: 0 0 80px var(--neon-red);
+        }
+
+        .card.loser {
+            opacity: 0;
+            transform: scale(0.6) translateY(100px) !important;
+            filter: grayscale(100%) brightness(0.3);
+            pointer-events: none;
+        }
+
+        /* Winner Screen - Redesigned */
         #winner-screen {
             display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            z-index: 100;
-            text-align: center;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 300;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
-        .judge-cell {
-            font-size: 80px;
-            margin-bottom: 10px;
-            animation: bounce 2s infinite;
+        .winner-title {
+            display: none;
+            /* Hidden - focus on curation */
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 0 40px var(--neon-red), 0 0 80px var(--neon-red);
+            margin-bottom: 20px;
+            letter-spacing: 4px;
         }
 
-        @keyframes bounce {
+        .winner-card {
+            display: none;
+            /* Hidden - focus on curation */
+            width: 45%;
+            max-width: 280px;
+            aspect-ratio: 2/3;
+            border: 5px solid var(--neon-red);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 100px var(--neon-red), 0 0 200px rgba(255, 21, 60, 0.5);
+            margin-bottom: 20px;
+            animation: winner-float 3s ease-in-out infinite;
+        }
+
+        @keyframes winner-float {
 
             0%,
             100% {
@@ -279,173 +419,789 @@
             }
         }
 
-        .winner-card {
-            width: 200px;
-            height: 300px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin: 20px 0;
-            position: relative;
-        }
-
         .winner-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .cta-btn {
-            background: #FF153C;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 21, 60, 0.4);
-            animation: pulse 1.5s infinite;
+        .winner-name {
+            display: none;
+            /* Hidden - focus on curation */
+            font-size: 2rem;
+            color: #fff;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px #000;
         }
 
-        @keyframes pulse {
-            0% {
+        /* Winner Taste Header */
+        .winner-taste-header {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .winner-taste-header {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+        }
+
+        @keyframes curation-glow {
+            from {
+                text-shadow: 0 0 15px var(--neon-red), 2px 2px 4px rgba(0, 0, 0, 0.8);
+            }
+
+            to {
+                text-shadow: 0 0 25px var(--neon-red), 0 0 35px rgba(255, 21, 60, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.8);
+            }
+        }
+
+        /* Recommendation Section */
+        .recommendation-section {
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 25px;
+        }
+
+        .recommendation-title {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 500px) {
+            .recommendation-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .recommend-card {
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            aspect-ratio: 2/3;
+        }
+
+        .recommend-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-red);
+            box-shadow: 0 0 20px rgba(255, 21, 60, 0.6);
+        }
+
+        .recommend-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .winner-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #000, #1a1a1a);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid var(--neon-red);
+            border-radius: 50px;
+            box-shadow: 0 6px 30px rgba(255, 21, 60, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: none;
+            font-family: 'Noto Sans KR', sans-serif;
+            white-space: nowrap;
+        }
+
+        .winner-cta img {
+            width: 45px;
+            height: auto;
+            vertical-align: middle;
+            flex-shrink: 0;
+            margin: 0 2px;
+        }
+
+        .winner-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 40px rgba(255, 21, 60, 0.6);
+        }
+
+        @media (max-width: 500px) {
+            .winner-cta {
+                font-size: 0.95rem;
+                padding: 12px 20px;
+                gap: 2px;
+            }
+
+            .winner-cta img {
+                width: 40px;
+            }
+        }
+
+        .cta-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Canvas for confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 250;
+            pointer-events: none;
+        }
+
+        /* Opening Screen */
+        #opening-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: #000;
+            overflow: hidden;
+            cursor: pointer;
+            /* Indicate clickable */
+        }
+
+        .opening-bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            object-fit: cover;
+            filter: brightness(0.4);
+            /* Darker filter */
+        }
+
+        .opening-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* removed translateY(-40px) to center content */
+        }
+
+        .opening-title-img {
+            max-width: 90%;
+            height: auto;
+            display: block;
+            margin: 0 auto 0 auto;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            animation: title-pulse-img 3s ease-in-out infinite;
+        }
+
+        @keyframes title-pulse-img {
+
+            0%,
+            100% {
                 transform: scale(1);
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
             }
 
             50% {
                 transform: scale(1.05);
+                filter: drop_shadow(0 0 40px rgba(255, 255, 255, 0.9));
+            }
+        }
+
+        .opening-subtitle {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+            letter-spacing: 2px;
+            margin-bottom: 50px;
+            opacity: 0.95;
+            margin-top: -70px;
+            position: relative;
+            z-index: 20;
+        }
+
+        .opening-instructions {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+            margin-top: -20px;
+            backdrop-filter: blur(5px);
+            max-width: 90%;
+            width: 320px;
+        }
+
+        .opening-instructions h3 {
+            color: #FFD700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .opening-instructions p {
+            color: #ccc;
+            font-size: 0.95rem;
+            margin: 8px 0;
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+        }
+
+        .opening-instructions .highlight {
+            color: #fff;
+            font-weight: 700;
+            margin-top: 12px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.3);
+            padding-top: 10px;
+        }
+
+        .opening-cta-container {
+            position: absolute;
+            bottom: 50px;
+            width: 100%;
+            text-align: center;
+            z-index: 20;
+            pointer-events: none;
+            /* Allow clicks to pass through to screen */
+        }
+
+        .opening-cta {
+            pointer-events: auto;
+            /* Re-enable for button visual */
+            padding: 20px 60px;
+            background: transparent;
+            color: #fff;
+            font-size: 1.8rem;
+            /* Adjusted for Korean */
+            font-weight: 900;
+            border: none;
+            cursor: pointer;
+            font-family: 'Noto Sans KR', sans-serif;
+            /* Back to Korean font */
+            text-transform: none;
+            letter-spacing: 2px;
+            position: relative;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 2px 2px 0 #ff153c;
+            animation: press-start-blink 1.2s step-end infinite;
+            box-shadow: none;
+        }
+
+        .opening-cta::before {
+            display: none;
+        }
+
+        @keyframes press-start-blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .opening-cta:hover {
+            transform: scale(1.1);
+            background: transparent;
+            box-shadow: none;
+            color: #ff153c;
+            text-shadow: 0 0 10px rgba(255, 21, 60, 0.8), 2px 2px 0 #fff;
+            animation: none;
+            opacity: 1;
+        }
+
+        @media (max-width: 500px) {
+            .opening-title-img {
+                margin: 0 auto 0 auto;
+                max-width: 85%;
+            }
+
+            .opening-subtitle {
+                font-size: 1rem;
+                padding: 0 20px;
+                letter-spacing: 1px;
+                margin-bottom: 30px;
+                margin-top: -60px;
+            }
+
+            .opening-instructions {
+                width: 300px;
+                padding: 15px 20px;
+                margin-top: 10px;
+            }
+
+            .opening-instructions p {
+                font-size: 0.85rem;
+            }
+
+            .opening-cta-container {
+                bottom: 40px;
+            }
+
+            .opening-cta {
+                font-size: 1.4rem;
+                padding: 15px 40px;
+            }
+        }
+
+        /* If Black Han Sans is not loaded, import it */
+        @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
+
+        @keyframes cta-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow:
+                    0 0 20px rgba(255, 21, 60, 0.4),
+                    inset 0 0 10px rgba(255, 21, 60, 0.1),
+                    0 8px 25px rgba(0, 0, 0, 0.5);
+            }
+
+            50% {
+                transform: scale(1.03);
+                box-shadow:
+                    0 0 40px rgba(255, 21, 60, 0.6),
+                    inset 0 0 20px rgba(255, 21, 60, 0.2),
+                    0 10px 35px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        .opening-cta:hover {
+            transform: scale(1.08);
+            background: #ffe6e9;
+            box-shadow:
+                0 0 50px rgba(255, 21, 60, 0.8),
+                inset 0 0 30px rgba(255, 21, 60, 0.2),
+                0 12px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .opening-cta:hover::before {
+            opacity: 1;
+        }
+
+        @media (max-width: 500px) {
+            .opening-cta {
+                font-size: 1.2rem;
+                padding: 18px 50px;
+                letter-spacing: 2px;
+            }
+        }
+
+        /* 3D Battle Transition Text - Tekken Style */
+        #battle-text {
+            position: fixed;
+            top: 50%;
+            right: -150%;
+            transform: translateY(-50%) perspective(1000px) rotateY(-15deg) scale(0.8);
+            font-family: 'Black Ops One', cursive;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #FFD700;
+            z-index: 600;
+            white-space: normal;
+            letter-spacing: 8px;
+            opacity: 0;
+            filter: blur(0px);
+            text-align: center;
+            line-height: 1.1;
+            text-shadow:
+                0 0 30px rgba(255, 215, 0, 1),
+                0 0 50px rgba(255, 215, 0, 0.8),
+                3px 3px 0 #000,
+                -3px -3px 0 #000,
+                3px -3px 0 #000,
+                -3px 3px 0 #000,
+                5px 5px 0 #000,
+                -5px -5px 0 #000,
+                5px -5px 0 #000,
+                -5px 5px 0 #000,
+                8px 8px 25px rgba(0, 0, 0, 0.9);
+        }
+
+        @media (max-width: 500px) {
+            #battle-text {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+                line-height: 0.95;
+            }
+        }
+
+        /* Background overlay during battle text */
+        .battle-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 550;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .battle-overlay-active {
+            animation: overlay-fade 2.5s ease-out forwards;
+        }
+
+        @keyframes overlay-fade {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            40%,
+            60% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes battle-fly {
+            0% {
+                right: -150%;
+                opacity: 0;
+                transform: translateY(-50%) perspective(1000px) rotateY(-15deg) scale(0.8);
+                filter: blur(20px);
+            }
+
+            15% {
+                opacity: 1;
+                filter: blur(5px);
+            }
+
+            45% {
+                right: 50%;
+                transform: translateY(-50%) translateX(50%) perspective(1000px) rotateY(0deg) scale(1.3);
+                filter: blur(0px);
+            }
+
+            55% {
+                right: 50%;
+                transform: translateY(-50%) translateX(50%) perspective(1000px) rotateY(0deg) scale(1.3);
+                filter: blur(0px);
+            }
+
+            75% {
+                opacity: 1;
+                filter: blur(5px);
             }
 
             100% {
-                transform: scale(1);
+                right: 200%;
+                opacity: 0;
+                transform: translateY(-50%) perspective(1000px) rotateY(15deg) scale(0.8);
+                filter: blur(20px);
+            }
+        }
+
+        .battle-fly-animation {
+            animation: battle-fly 2.5s cubic-bezier(0.16, 0.8, 0.3, 1) forwards;
+        }
+
+        /* Winner TYPE Badge */
+        .winner-type {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FFD700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 25px #FFD700, 2px 2px 8px rgba(0, 0, 0, 0.9);
+            letter-spacing: 3px;
+            padding: 12px 30px;
+            border: 3px solid #FFD700;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            animation: type-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes type-glow {
+            from {
+                box-shadow: 0 0 15px #FFD700;
+            }
+
+            to {
+                box-shadow: 0 0 30px #FFD700, 0 0 50px rgba(255, 215, 0, 0.5);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .winner-type {
+                font-size: 1.5rem;
+                font-weight: 800;
+                letter-spacing: 2px;
+                padding: 10px 20px;
             }
         }
     </style>
 </head>
 
+<!-- Opening Screen -->
+<div id="opening-screen" onclick="startGame()">
+    <video autoplay muted loop playsinline class="opening-bg-video">
+        <source src="background_opening.mp4" type="video/mp4">
+    </video>
+    <div class="opening-content">
+        <img src="title.png" class="opening-title-img" alt="티빙 콘텐츠 월드컵">
+        <div class="opening-subtitle">당신의 최애 콘텐츠를 선택하세요</div>
+
+        <div class="opening-instructions">
+            <h3>진행 방법</h3>
+            <p>1. 둘 중 끌리는 콘텐츠를 골라주세요</p>
+            <p>2. 8강 토너먼트로 진행!</p>
+            <p>3. 마지막에 당신의 최애가 결정됩니다</p>
+            <p class="highlight">✨ 끝나면 취향 저격 콘텐츠 추천까지!</p>
+        </div>
+    </div>
+    <div class="opening-cta-container">
+        <div class="opening-cta">화면을 터치하세요</div>
+    </div>
+</div>
+
+<!-- 3D Battle Transition Text -->
+<div class="battle-overlay" id="battle-overlay"></div>
+<div id="battle-text">
+    GET<br>
+    READY<br>
+    FOR<br>
+    THE NEXT<br>
+    BATTLE
+</div>
+
 <body>
 
-    <!-- Background -->
-    <div class="bg-village">
-        <div class="cloud" style="top: 10%; width: 60px; height: 60px; animation-duration: 25s;"></div>
-        <div class="cloud" style="top: 20%; left: 40%; width: 40px; height: 40px; animation-duration: 30s;"></div>
+    <!-- Video Background -->
+    <video class="bg-video" autoplay loop muted playsinline>
+        <source src="bg_arena_vid.mp4" type="video/mp4">
+    </video>
+
+    <div class="overlay"></div>
+    <canvas id="lightning-canvas"></canvas>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- TVING Logo (Top Right) -->
+    <img src="tving_logo.svg" alt="TVING" class="tving-logo">
+
+    <div class="header">
+        <div class="round-badge" id="round-badge">ROUND 1</div>
     </div>
 
-    <!-- Header -->
-    <header>
-        <div class="round-badge" id="round-badge">8강전</div>
-        <div id="status-text">당신의 취향을 저격할 세포는? 1/4</div>
-    </header>
-
-    <!-- Game Area -->
-    <div id="game-area">
-        <div class="vs-badge">VS</div>
-
-        <!-- Card Left/Top -->
+    <div class="arena">
+        <!-- Card A (Left - Red) -->
         <div class="card" id="card-a" onclick="selectCard('a')">
-            <img src="" alt="Contents A" id="img-a">
-            <div class="card-title" id="title-a">Contents A</div>
+            <div class="card-inner">
+                <img src="" id="img-a">
+            </div>
+            <div class="reflection">
+                <img src="" id="reflect-a">
+            </div>
+            <div class="card-title" id="title-a">Title A</div>
         </div>
 
-        <!-- Card Right/Bottom -->
+        <!-- Card B (Right - Blue) -->
         <div class="card" id="card-b" onclick="selectCard('b')">
-            <img src="" alt="Contents B" id="img-b">
-            <div class="card-title" id="title-b">Contents B</div>
+            <div class="card-inner">
+                <img src="" id="img-b">
+            </div>
+            <div class="reflection">
+                <img src="" id="reflect-b">
+            </div>
+            <div class="card-title" id="title-b">Title B</div>
         </div>
     </div>
 
-    <!-- Cell Reaction Overlay -->
-    <div class="cell-reaction" id="cell-reaction">
-        <div class="cell-bubble" id="cell-msg">탁월한 선택이야!</div>
-        <div class="cell-avatar" id="cell-icon">😍</div>
+    <!-- VS Badge (Absolute positioned in center) -->
+    <div class="vs-container">
+        <div class="vs-text">VS</div>
     </div>
 
     <!-- Winner Screen -->
     <div id="winner-screen">
-        <div class="judge-cell">⚖️</div>
-        <h2>판사 세포의 판결!</h2>
-        <p>당신의 최애 콘텐츠가 정해졌습니다.</p>
+        <div class="winner-taste-header">당신의 취향은?</div>
 
         <div class="winner-card">
             <img src="" id="winner-img">
         </div>
-        <h3 id="winner-title" style="margin-bottom: 20px; color: #333;">Title</h3>
+        <div class="winner-name" id="winner-name">Title</div>
+        <div class="winner-type" id="winner-type">TYPE</div>
 
-        <button class="cta-btn" onclick="goToApp()">티빙에서 바로보기</button>
+        <!-- Recommendation Section -->
+        <div class="recommendation-section">
+            <h3 class="recommendation-title">이런 작품은 어떠세요?</h3>
+            <div class="recommendation-grid" id="recommendation-grid">
+                <!-- Dynamic recommendation cards will be inserted here -->
+            </div>
+        </div>
+
+        <button class="winner-cta" onclick="goToApp()">
+            지금 <img src="TVING_APP.webp" alt="TVING">에서 확인하기
+        </button>
     </div>
 
     <script>
-        // --- Data: TVING Contents (8 Items) ---
-        // Using placeholder colors/text for prototype. In real ad, use actual poster images.
-        const originalContents = [
-            { id: 1, title: "눈물의 여왕", color: "#FFB6C1", img: "https://via.placeholder.com/300x450/FFB6C1/333?text=Queen+of+Tears" },
-            { id: 2, title: "선재 업고 튀어", color: "#87CEEB", img: "https://via.placeholder.com/300x450/87CEEB/333?text=Lovely+Runner" },
-            { id: 3, title: "환승연애3", color: "#FF69B4", img: "https://via.placeholder.com/300x450/FF69B4/333?text=Transit+Love+3" },
-            { id: 4, title: "크라임씬 리턴즈", color: "#4B0082", img: "https://via.placeholder.com/300x450/4B0082/fff?text=Crime+Scene" },
-            { id: 5, title: "피라미드 게임", color: "#DC143C", img: "https://via.placeholder.com/300x450/DC143C/fff?text=Pyramid+Game" },
-            { id: 6, title: "LTNS", color: "#FFD700", img: "https://via.placeholder.com/300x450/FFD700/333?text=LTNS" },
-            { id: 7, title: "이재, 곧 죽습니다", color: "#000000", img: "https://via.placeholder.com/300x450/000000/fff?text=Deaths+Game" },
-            { id: 8, title: "운수 오진 날", color: "#2E8B57", img: "https://via.placeholder.com/300x450/2E8B57/fff?text=A+Bloody+Lucky+Day" }
+        const contents = [
+            { id: 1, title: "눈물의 여왕", genre: "romance", img: "poster/눈물의 여왕.webp" },
+            { id: 2, title: "선재 업고 튀어", genre: "romance", img: "poster/선재업고튀어.webp" },
+            { id: 3, title: "환승연애3", genre: "reality", img: "poster/환승연애3.webp" },
+            { id: 4, title: "크라임씬 리턴즈", genre: "thriller", img: "poster/크라임씬 리턴즈.webp" },
+            { id: 5, title: "피라미드 게임", genre: "thriller", img: "poster/피라미드 게임.webp" },
+            { id: 6, title: "LTNS", genre: "drama", img: "poster/LTNS.webp" },
+            { id: 7, title: "이재, 곧 죽습니다", genre: "drama", img: "poster/이재, 곧 죽습니다.webp" },
+            { id: 8, title: "운수 오진 날", genre: "thriller", img: "poster/운수 오진 날.webp" }
         ];
 
-        // Cell Reactions Data
-        const reactions = {
-            love: { icon: "😍", msgs: ["사랑스러워!", "두근두근해!", "로맨틱해!"] },
-            reason: { icon: "👓", msgs: ["합리적이야.", "분석 완료.", "논리적인 선택."] },
-            hungry: { icon: "🍗", msgs: ["맛있겠다..", "시원한 전개!", "야식 생각나네"] }
-        };
+        // Curation-only items (for recommendations, not in tournament)
+        const curationItems = [
+            // Romance (6개)
+            { id: 101, title: "어쩌다 발견한 하루", genre: "romance", img: "poster/어쩌다 발견한 하루.webp" },
+            { id: 102, title: "우리들의 블루스", genre: "romance", img: "poster/우리들의 블루스.webp" },
+            { id: 103, title: "선배, 그 립스틱 바르지 마요", genre: "romance", img: "poster/선배, 그 립스틱 바르지 마요.webp" },
+            { id: 104, title: "일타 스캔들", genre: "romance", img: "poster/일타 스캔들.webp" },
+            { id: 105, title: "빈센조", genre: "romance", img: "poster/빈센조.webp" },
+            { id: 106, title: "작은 아씨들", genre: "romance", img: "poster/작은 아씨들.webp" },
 
-        // --- State ---
-        let currentRound = []; // Contents for current round
-        let nextRound = [];    // Winners for next round
-        let currentIndex = 0;  // Index in current pair
-        let isAnimating = false;
+            // Thriller (6개)
+            { id: 107, title: "무인도의 디바", genre: "thriller", img: "poster/무인도의 디바.webp" },
+            { id: 108, title: "빅마우스", genre: "thriller", img: "poster/빅마우스.webp" },
+            { id: 109, title: "악귀", genre: "thriller", img: "poster/악귀.webp" },
+            { id: 110, title: "재벌집 막내아들", genre: "thriller", img: "poster/재벌집 막내아들.webp" },
+            { id: 111, title: "슈룹", genre: "thriller", img: "poster/슈룹.webp" },
+            { id: 112, title: "환혼", genre: "thriller", img: "poster/환혼.webp" },
 
-        // --- Init ---
+            // Drama (6개)
+            { id: 113, title: "나의 해방일지", genre: "drama", img: "poster/나의 해방일지.webp" },
+            { id: 114, title: "우리가 남이가", genre: "drama", img: "poster/우리가 남이가.webp" },
+            { id: 115, title: "유미의 세포들", genre: "drama", img: "poster/유미의 세포들.webp" },
+            { id: 116, title: "미스터 션샤인", genre: "drama", img: "poster/미스터 션샤인.webp" },
+            { id: 117, title: "슬기로운 감빵생활", genre: "drama", img: "poster/슬기로운 감빵생활.webp" },
+            { id: 118, title: "스타트업", genre: "drama", img: "poster/스타트업.webp" },
+
+            // Reality (6개)
+            { id: 119, title: "나는 솔로", genre: "reality", img: "poster/나는 솔로.webp" },
+            { id: 120, title: "서울체킹", genre: "reality", img: "poster/서울체킹.webp" },
+            { id: 121, title: "환승연애2", genre: "reality", img: "poster/환승연애2.webp" },
+            { id: 122, title: "신서유기", genre: "reality", img: "poster/신서유기.webp" },
+            { id: 123, title: "놀라운 토요일", genre: "reality", img: "poster/놀라운 토요일.webp" },
+            { id: 124, title: "바퀴 달린 집", genre: "reality", img: "poster/바퀴 달린 집.webp" }
+        ];
+
+        // Combined list for recommendations
+        const allContent = [...contents, ...curationItems];
+
+        let currentRound = [], nextRound = [], currentIndex = 0, isAnimating = false;
+        let gameStarted = false;
+
+        function startGame() {
+            // Hide opening screen
+            document.getElementById('opening-screen').style.display = 'none';
+
+            // Hide arena elements during battle text animation
+            document.querySelector('.arena').style.display = 'none';
+            document.querySelector('.vs-container').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
+
+            // Show background overlay
+            const overlay = document.getElementById('battle-overlay');
+            overlay.classList.add('battle-overlay-active');
+
+            // Show and animate battle text
+            const battleText = document.getElementById('battle-text');
+            battleText.classList.add('battle-fly-animation');
+
+            // Start game after animation completes
+            setTimeout(() => {
+                overlay.classList.remove('battle-overlay-active');
+
+                // Show arena elements
+                document.querySelector('.arena').style.display = 'flex';
+                document.querySelector('.vs-container').style.display = 'flex';
+                document.querySelector('.header').style.display = 'block';
+
+                gameStarted = true;
+                initGame();
+            }, 2500);
+        }
+
         function initGame() {
-            // Shuffle contents
-            currentRound = [...originalContents].sort(() => Math.random() - 0.5);
+            currentRound = [...contents].sort(() => Math.random() - 0.5);
             nextRound = [];
             currentIndex = 0;
             renderRound();
         }
 
-        // --- Render ---
         function renderRound() {
-            const roundName = currentRound.length === 2 ? "결승전" : currentRound.length + "강전";
-            const matchCount = (currentIndex / 2) + 1;
+            // Korean round names
+            let roundName;
+            switch (currentRound.length) {
+                case 2: roundName = "결승"; break;
+                case 4: roundName = "준결승"; break;
+                case 8: roundName = "8강전"; break;
+                default: roundName = `${currentRound.length}강전`;
+            }
+
+            // Add progress indicator
             const totalMatches = currentRound.length / 2;
+            const currentMatch = Math.floor(currentIndex / 2) + 1;
+            const progressText = `${roundName} (${currentMatch}/${totalMatches})`;
 
-            document.getElementById('round-badge').innerText = roundName;
-            document.getElementById('status-text').innerText = roundName === "결승전" ? "최고의 작품을 선택하세요!" : `${matchCount} / ${totalMatches}`;
+            document.getElementById('round-badge').innerText = progressText;
 
-            const itemA = currentRound[currentIndex];
-            const itemB = currentRound[currentIndex + 1];
+            updateCard('a', currentRound[currentIndex]);
+            updateCard('b', currentRound[currentIndex + 1]);
 
-            // Render Cards
-            updateCard('a', itemA);
-            updateCard('b', itemB);
-
-            // Reset animations
+            // Reset states
             document.querySelectorAll('.card').forEach(c => {
-                c.className = 'card';
-                c.style.opacity = '1';
-                c.style.transform = 'scale(1)';
+                c.classList.remove('winner', 'loser');
             });
+
+            // Show VS again
+            document.querySelector('.vs-container').classList.remove('hidden');
         }
 
         function updateCard(side, item) {
             const img = document.getElementById(`img-${side}`);
+            const reflect = document.getElementById(`reflect-${side}`);
             const title = document.getElementById(`title-${side}`);
 
             img.src = item.img;
-            // Provide fallback colored background if image fails (for prototype)
-            img.style.backgroundColor = item.color;
+            reflect.src = item.img;
             title.innerText = item.title;
         }
 
-        // --- Interaction ---
         function selectCard(selectedSide) {
             if (isAnimating) return;
             isAnimating = true;
@@ -453,77 +1209,178 @@
             const winnerIndex = selectedSide === 'a' ? currentIndex : currentIndex + 1;
             const loserSide = selectedSide === 'a' ? 'b' : 'a';
 
-            // Add to next round
             nextRound.push(currentRound[winnerIndex]);
 
-            // 1. Card Animation
-            document.getElementById(`card-${selectedSide}`).classList.add('selected');
-            document.getElementById(`card-${loserSide}`).classList.add('unselected');
+            // Hide VS during selection
+            document.querySelector('.vs-container').classList.add('hidden');
 
-            // 2. Cell Reaction (Random)
-            showCellReaction();
+            // Final match special effects
+            const isFinalMatch = currentRound.length === 2;
+            if (isFinalMatch) {
+                document.body.classList.add('shake');
+                setTimeout(() => document.body.classList.remove('shake'), 500);
+                triggerConfetti(); // Confetti instead of lightning
+            } else {
+                triggerLightning();
+            }
 
-            // 3. Transition Logic
+            // Animate
+            document.getElementById(`card-${selectedSide}`).classList.add('winner');
+            document.getElementById(`card-${loserSide}`).classList.add('loser');
+
             setTimeout(() => {
                 currentIndex += 2;
-
-                // Check Round End
                 if (currentIndex >= currentRound.length) {
                     if (nextRound.length === 1) {
-                        showWinner(nextRound[0]);
-                        return; // Game Over
+                        // Extended delay for champion reveal
+                        setTimeout(() => showWinner(nextRound[0]), 800);
+                        return;
                     }
-                    // Prepare Next Round
                     currentRound = [...nextRound];
                     nextRound = [];
                     currentIndex = 0;
                 }
-
                 renderRound();
-                hideCellReaction();
                 isAnimating = false;
-
-            }, 1200); // Transition Time
+            }, 1200); // Extended from 800ms to 1200ms
         }
 
-        function showCellReaction() {
-            const types = ['love', 'reason', 'hungry'];
-            const type = types[Math.floor(Math.random() * types.length)];
-            const data = reactions[type];
-            const msg = data.msgs[Math.floor(Math.random() * data.msgs.length)];
-
-            const el = document.getElementById('cell-reaction');
-            const bubble = document.getElementById('cell-msg');
-            const icon = document.getElementById('cell-icon');
-
-            bubble.innerText = msg;
-            icon.innerText = data.icon;
-
-            el.classList.add('show');
-        }
-
-        function hideCellReaction() {
-            document.getElementById('cell-reaction').classList.remove('show');
-        }
-
-        // --- Winner Logic ---
         function showWinner(item) {
-            const screen = document.getElementById('winner-screen');
-            screen.style.display = 'flex';
-            document.getElementById('winner-img').src = item.img;
-            document.getElementById('winner-title').innerText = item.title;
+            // Hide arena elements
+            document.querySelector('.arena').style.display = 'none';
+            document.querySelector('.vs-container').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
 
-            // Fire confetti or effects here
+            document.getElementById('winner-screen').style.display = 'flex';
+            document.getElementById('winner-img').src = item.img;
+            document.getElementById('winner-name').innerText = item.title;
+
+            // Enhanced TYPE badges based on genre
+            const typeNames = {
+                'romance': '💖 감성 로맨티스트',
+                'thriller': '⚡ 스릴 헌터',
+                'drama': '🎭 감동 컬렉터',
+                'reality': '🎬 리얼리티 러버'
+            };
+
+            document.getElementById('winner-type').innerText = typeNames[item.genre] || '🌟 콘텐츠 마니아';
+
+            // Show recommendations from same genre (up to 6)
+            const recommendations = allContent.filter(c =>
+                c.genre === item.genre && c.id !== item.id
+            ).slice(0, 6);
+
+            const recommendGrid = document.getElementById('recommendation-grid');
+            recommendGrid.innerHTML = '';
+
+            recommendations.forEach(rec => {
+                const card = document.createElement('div');
+                card.className = 'recommend-card';
+                card.onclick = () => goToApp();
+
+                const img = document.createElement('img');
+                img.src = rec.img;
+                img.alt = rec.title;
+
+                card.appendChild(img);
+                recommendGrid.appendChild(card);
+            });
         }
 
         function goToApp() {
-            // Deeplink or App Store link
             window.location.href = "https://www.tving.com";
         }
 
-        // Start
-        initGame();
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
+            const particles = [];
+            const colors = ['#FFD700', '#FFA500', '#FF69B4', '#87CEEB', '#98FB98'];
+
+            // Create particles
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: -20,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 3 + 2,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 10,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 4
+                });
+            }
+
+            let animationFrame = 0;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach((p, index) => {
+                    // Update position
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.1; // Gravity
+                    p.rotation += p.rotationSpeed;
+
+                    // Draw confetti
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.5);
+                    ctx.restore();
+
+                    // Remove particles that are off screen
+                    if (p.y > canvas.height + 50) {
+                        particles.splice(index, 1);
+                    }
+                });
+
+                animationFrame++;
+                if (particles.length > 0 && animationFrame < 300) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        function triggerLightning() {
+            const canvas = document.getElementById('lightning-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = '#fff';
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 4;
+
+            let frames = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (frames > 8) return;
+
+                if (Math.random() > 0.5) {
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width / 2, canvas.height / 2);
+                    for (let i = 0; i < 6; i++) {
+                        ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                        ctx.moveTo(canvas.width / 2, canvas.height / 2);
+                    }
+                    ctx.stroke();
+                }
+                frames++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Game will start when user clicks "지금 시작하기" button
     </script>
 </body>
 
