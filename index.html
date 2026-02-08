@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>당신의 프라임 세포는? | TVING</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #FF153C 0%, #FF5E3A 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: #FF153C;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 30px 0 20px;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FF153C 0%, #FF5E3A 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 21, 60, 0.3);
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 21, 60, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Quiz Screen */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF153C 0%, #FF5E3A 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .question-number {
+            color: #FF153C;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 20px 24px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+        }
+
+        .answer-btn:hover {
+            border-color: #FF153C;
+            background: #fff5f6;
+            transform: translateX(4px);
+        }
+
+        .answer-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #FF153C;
+            border-radius: 16px 0 0 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .answer-btn:hover::before {
+            opacity: 1;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+
+        .result-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+
+        .result-subtitle {
+            font-size: 20px;
+            color: #FF153C;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .result-description {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f8f8;
+            border-radius: 16px;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #FFE5E5 0%, #FFF0F0 100%);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 2px solid #FFD0D0;
+        }
+
+        .recommendation-title {
+            font-size: 16px;
+            color: #FF153C;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .recommendation-content {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #FF153C 0%, #FF5E3A 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 21, 60, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 21, 60, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .main-title {
+                font-size: 26px;
+            }
+
+            .question-text {
+                font-size: 20px;
+            }
+
+            .result-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">TVING</div>
+
+        <!-- Start Screen -->
+        <div class="screen active" id="start-screen">
+            <div class="start-screen">
+                <h1 class="main-title">당신의<br>프라임 세포는?</h1>
+                <p class="subtitle">6가지 질문으로 알아보는<br>나에게 딱 맞는 콘텐츠 추천!</p>
+                <button class="btn" onclick="startQuiz()">시작하기</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="screen" id="quiz-screen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="question-number" id="question-number"></div>
+            <h2 class="question-text" id="question-text"></h2>
+            <div class="answers" id="answers"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="screen" id="result-screen">
+            <div class="result-screen">
+                <div class="result-icon" id="result-icon"></div>
+                <h2 class="result-title">당신의 프라임 세포는</h2>
+                <h3 class="result-subtitle" id="result-subtitle"></h3>
+                <p class="result-description" id="result-description"></p>
+                <div class="recommendation">
+                    <div class="recommendation-title">이 작품을 보는건 어때요?</div>
+                    <div class="recommendation-content" id="recommendation-content"></div>
+                </div>
+                <button class="cta-btn" onclick="goToLanding()">TVING에서 보기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data
+        const questions = [
+            {
+                q: "주말 저녁, 당신의 선택은?",
+                answers: [
+                    { text: "따뜻한 담요 덮고 감동적인 영화 보기", scores: { 감성: 3, 사랑: 1 } },
+                    { text: "좋아하는 사람과 로맨틱한 데이트", scores: { 사랑: 3, 응큼: 1 } },
+                    { text: "맛집 탐방하며 먹방 투어", scores: { 출출: 3, 응큼: 1 } },
+                    { text: "미스터리 소설 읽으며 혼자만의 시간", scores: { 명탐정: 3, 이성: 1 } }
+                ]
+            },
+            {
+                q: "친구가 고민 상담을 한다면?",
+                answers: [
+                    { text: "따뜻하게 공감하고 감정적 위로를 해준다", scores: { 감성: 3, 사랑: 1 } },
+                    { text: "논리적으로 분석하고 해결책을 제시한다", scores: { 이성: 3, 명탐정: 1 } },
+                    { text: "일단 맛있는 거 먹으면서 이야기 들어준다", scores: { 출출: 3, 응큼: 1 } },
+                    { text: "재미있는 이야기로 분위기를 환기시킨다", scores: { 응큼: 3, 사랑: 1 } }
+                ]
+            },
+            {
+                q: "가장 기억에 남는 순간은?",
+                answers: [
+                    { text: "사랑하는 사람과의 특별했던 순간", scores: { 사랑: 3, 감성: 1 } },
+                    { text: "오랜 과제를 해결했을 때의 성취감", scores: { 명탐정: 3, 이성: 2 } },
+                    { text: "인생 맛집 발견했을 때", scores: { 출출: 3 } },
+                    { text: "감동적인 영화를 보고 울었던 순간", scores: { 감성: 3, 사랑: 1 } }
+                ]
+            },
+            {
+                q: "스트레스 받을 때 나는?",
+                answers: [
+                    { text: "맛있는 음식을 먹는다", scores: { 출출: 3, 응큼: 1 } },
+                    { text: "연인이나 좋아하는 사람에게 연락한다", scores: { 사랑: 3, 응큼: 1 } },
+                    { text: "감동적인 콘텐츠를 보며 카타르시스를 느낀다", scores: { 감성: 3 } },
+                    { text: "혼자 조용히 생각을 정리한다", scores: { 이성: 3, 명탐정: 2 } }
+                ]
+            },
+            {
+                q: "당신이 선호하는 콘텐츠는?",
+                answers: [
+                    { text: "심장 쫄깃한 추리 스릴러", scores: { 명탐정: 3, 이성: 1 } },
+                    { text: "달달한 로맨스 드라마", scores: { 사랑: 3, 응큼: 2 } },
+                    { text: "먹방 & 쿡방 프로그램", scores: { 출출: 3 } },
+                    { text: "배움이 있는 다큐멘터리", scores: { 이성: 3, 명탐정: 1 } }
+                ]
+            },
+            {
+                q: "여행지에서 당신의 모습은?",
+                answers: [
+                    { text: "현지 맛집 리스트 정복하기", scores: { 출출: 3, 응큼: 1 } },
+                    { text: "역사와 문화를 공부하며 깊이 탐방", scores: { 이성: 3, 명탐정: 1 } },
+                    { text: "감성 사진 찍으며 추억 남기기", scores: { 감성: 3, 사랑: 1 } },
+                    { text: "로맨틱한 장소에서 특별한 시간 만들기", scores: { 사랑: 3, 응큼: 1 } }
+                ]
+            }
+        ];
+
+        const results = {
+            사랑: {
+                icon: "💕",
+                title: "사랑 세포",
+                description: "당신은 로맨스의 화신! 따뜻한 감정과 설레는 순간을 사랑하는 당신에게는 달달한 로맨스 콘텐츠가 딱이에요.",
+                content: "눈물의 여왕"
+            },
+            감성: {
+                icon: "😢",
+                title: "감성 세포",
+                description: "당신은 깊은 감동을 추구하는 감성파! 진한 여운을 남기는 스토리와 울림이 있는 콘텐츠가 당신의 마음을 채워줄 거예요.",
+                content: "이상한 변호사 우영우"
+            },
+            출출: {
+                icon: "🍽️",
+                title: "출출 세포",
+                description: "음식은 당신의 행복! 먹는 것을 보는 것만으로도 힐링되는 당신에게는 군침 도는 요리 콘텐츠가 최고의 선택이에요.",
+                content: "흑백요리사"
+            },
+            응큼: {
+                icon: "😏",
+                title: "응큼 세포",
+                description: "재치있고 유쾌한 당신! 웃음과 설렘이 공존하는 로맨틱 코메디가 당신의 취향을 제대로 저격할 거예요.",
+                content: "선재 업고 튀어"
+            },
+            명탐정: {
+                icon: "🔍",
+                title: "명탐정 세포",
+                description: "호기심 많고 분석적인 당신! 복잡한 퍼즐을 푸는 듯한 추리 콘텐츠가 당신의 지적 욕구를 만족시켜 줄 거예요.",
+                content: "커넥션"
+            },
+            이성: {
+                icon: "🧠",
+                title: "이성 세포",
+                description: "논리적이고 지적인 당신! 배움과 통찰을 주는 다큐멘터리 콘텐츠로 세상을 더 깊이 이해하는 시간을 가져보세요.",
+                content: "셜록"
+            }
+        };
+
+        let currentQuestion = 0;
+        let scores = {
+            사랑: 0,
+            감성: 0,
+            출출: 0,
+            응큼: 0,
+            명탐정: 0,
+            이성: 0
+        };
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('quiz-screen').classList.add('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('question-number').textContent = `질문 ${currentQuestion + 1} / ${questions.length}`;
+            document.getElementById('question-text').textContent = question.q;
+            
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+            
+            question.answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer.text;
+                btn.onclick = () => selectAnswer(index);
+                answersDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(answerIndex) {
+            const answer = questions[currentQuestion].answers[answerIndex];
+            
+            // Add scores
+            for (let cell in answer.scores) {
+                scores[cell] += answer.scores[cell];
+            }
+            
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                setTimeout(() => showQuestion(), 300);
+            } else {
+                setTimeout(() => showResult(), 300);
+            }
+        }
+
+        function showResult() {
+            // Find the cell type with highest score
+            let maxScore = 0;
+            let resultType = '';
+            
+            for (let cell in scores) {
+                if (scores[cell] > maxScore) {
+                    maxScore = scores[cell];
+                    resultType = cell;
+                }
+            }
+            
+            const result = results[resultType];
+            
+            document.getElementById('quiz-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            
+            document.getElementById('result-icon').textContent = result.icon;
+            document.getElementById('result-subtitle').textContent = result.title;
+            document.getElementById('result-description').textContent = result.description;
+            document.getElementById('recommendation-content').textContent = result.content;
+        }
+
+        function goToLanding() {
+            // Replace with actual TVING landing page URL
+            window.location.href = 'https://www.tving.com';
+        }
+    </script>
+</body>
+</html>
